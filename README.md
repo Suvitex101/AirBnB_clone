@@ -1,5 +1,4 @@
 # 0x00. AirBnB clone - The console
-## 0x00.Table of contents
 
 ### 0x01 Introduction
 Team project to build a clone of AirBnB.
