@@ -6,6 +6,7 @@ from shlex import split
 from models.base_model import BaseModel
 from models import storage
 
+
 def check_arg(arg):
     check_curly = re.search(r"\{(.*?)\}", arg)
     check_brackests = re.search(r"\[(.*?)\]", arg)
@@ -22,6 +23,7 @@ def check_arg(arg):
         tmp = [i.strip(",") for i in spt]
         tmp.append(check_curly.group())
         return tmp
+
 
 class HBNBCommand(cmd.Cmd):
     """HBNB command interpreter"""
@@ -59,10 +61,13 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(first_arg) == 1:
             print("** instance id missing **")
-        elif "{}.{}".format(first_arg[0], first_arg[1])  not in obj_dict:
+        elif "{}.{}".format(first_arg[0], first_arg[1]) not in obj_dict:
             print("** no instance found **")
         else:
-            print("{}.{}".format(first_arg[0], first_arg[1]))
+            c_name = first_arg[0]
+            obj_id = first_arg[1]
+            dis_all = c_name + '.' + obj_id
+            print(storage.all()[dis_all])
 
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id
@@ -75,7 +80,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(first_arg) == 1:
             print("** instance id missing **")
-        elif "{}.{}".format(first_arg[0], first_arg[1])  not in obj_dict.keys():
+        elif "{}.{}".format(first_arg[0], first_arg[1]) not in obj_dict.keys():
             print("** no instance found **")
         else:
             del obj_dict["{}.{}".format(first_arg[0], first_arg[1])]
@@ -85,21 +90,21 @@ class HBNBCommand(cmd.Cmd):
         """Prints all string representation of
         all instances based or not on the class name
         Usage: all or all <class> or <class>.all()"""
-        first_arg = check_arg(arg)
-        if len(first_arg) > 0 and first_arg[0] not in HBNBCommand.__my_class:
+        my_arg = check_arg(arg)
+        if len(my_arg) > 0 and my_arg[0] not in HBNBCommand.__my_class:
             print("** class doesn't exist **")
         else:
             e_obj = []
             for obj in storage.all().values():
-                if len(first_arg) > 0 and first_arg[0] == obj.__class__.__name__:
+                if len(my_arg) > 0 and my_arg[0] == obj.__class__.__name__:
                     e_obj.append(obj.__str__())
-                elif len(first_arg) == 0:
+                elif len(my_arg) == 0:
                     e_obj.append(obj.__str__())
             print(e_obj)
 
     def do_update(self, arg):
         """Updates an instance based on the class name
-        and id by adding or updating attribute 
+        and id by adding or updating attribute
         Usage: update <class> <id> <attribute_name> <attribute_value> or
         <class>.update(<id>, <attribute_name>, <attribute_value>) or
         <class>.update(<id>, <dictionary>)"""
@@ -137,8 +142,8 @@ class HBNBCommand(cmd.Cmd):
         elif type(eval(first_arg[2])) == dict:
             obj = obj_dict["{}.{}".format(first_arg[0], first_arg[1])]
             for i, a in eval(first_arg[2]).items():
-                if (i in obj.__class__.__dict__.keys() and 
-                    type(obj.__class__.__dict__[i]) in {str, int, float}):
+                if (i in obj.__class__.__dict__.keys() and
+                        type(obj.__class__.__dict__[i]) in {str, int, float}):
                     typeval = type(obj.__class__.__dict__[i])
                     obj.__dict__[i] = typeval(a)
                 else:
@@ -152,6 +157,7 @@ class HBNBCommand(cmd.Cmd):
         """EOF command to exit"""
         print("")
         return True
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
