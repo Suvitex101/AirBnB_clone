@@ -5,6 +5,12 @@ import re
 from shlex import split
 from models.base_model import BaseModel
 from models import storage
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
 
 def check_arg(arg):
@@ -29,10 +35,16 @@ class HBNBCommand(cmd.Cmd):
     """HBNB command interpreter"""
     prompt = "(hbnb) "
     __my_class = {
-        "BaseModel"
+        "BaseModel",
+        "User",
+        "Place",
+        "State",
+        "City",
+        "Amenity",
+        "Review"
     }
 
-    def emptyarg(self):
+    def emptyline(self):
         """Do nothing on empty arg"""
         pass
 
@@ -47,6 +59,27 @@ class HBNBCommand(cmd.Cmd):
         else:
             print(eval(first_arg[0])().id)
             storage.save()
+
+    def default(self, arg):
+        """Default cmd module"""
+        line_dict = {
+            "all": self.do_all,
+            "show": self.do_show,
+            "update": self.do_update,
+            "destroy": self.do_destroy,
+            "count": self.do_count
+        }
+        check = re.search(r"\.", arg)
+        if check is not None:
+            my_arg = [arg[:check.span()[0]], arg[check.span()[1]:]]
+            check = re.search(r"\((.*?)\)", my_arg[1])
+            if check is not None:
+                cmd = [my_arg[1][:check.span()[0]], check.group()[1:-1]]
+                if cmd[0] in line_dict.keys():
+                    dis_arg = "{} {}".format(my_arg[0], cmd[1])
+                    return line_dict[cmd[0]](dis_arg)
+        print("*** Unknown syntax: {}".format(arg))
+        return False
 
     def do_show(self, arg):
         """Prints the string representation of an instance
@@ -148,6 +181,16 @@ class HBNBCommand(cmd.Cmd):
                     obj.__dict__[i] = typeval(a)
                 else:
                     obj.__dict__[i] = a
+
+    def do_count(self, arg):
+        """Retrieve the number of instances of a given class.
+        Usage: count <class> or <class>.count()"""
+        first_arg = check_arg(arg)
+        count = 0
+        for obj in storage.all().values():
+            if first_arg[0] == obj.__class__.__name__:
+                count += 1
+        print(count)
 
     def do_quit(self, arg):
         """command to exit the program"""
