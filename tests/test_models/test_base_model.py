@@ -1,6 +1,8 @@
 import unittest
-from models import BaseModel
+import models
+from models.base_model import BaseModel
 from datetime import datetime
+import os
 
 
 class TestBaseModel(unittest.TestCase):
@@ -40,4 +42,3 @@ class TestBaseModel(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
