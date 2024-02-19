@@ -1,0 +1,22 @@
+header {
+	background-color: #ffffff;
+	height: 70px;
+	width: 100%;
+	border-bottom: 1px solid #cccccc;
+	display: flex;
+	padding-left: 20px;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.container {
+	max-width: 1000px;
+	margin: 30px auto;
+}
+
+header .logo {
+    width: 142px;
+    height: 60px;
+    background: url("../images/logo.png") no-repeat center;
+    padding-left: 20px;
+}
